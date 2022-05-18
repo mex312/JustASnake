@@ -6,7 +6,7 @@ public class SnakePart extends Entity{
 
     public SnakePart(SnakePart parent){
         super("Snake Part");
-        setBounds(0, 0, 50, 50);
+        setBounds(0, 0, 20, 20);
         this.parent = parent;
         if(parent != null) parent.setChild(this);
     }
