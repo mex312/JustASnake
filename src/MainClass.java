@@ -1,5 +1,3 @@
-import com.sun.tools.javac.Main;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,23 +8,34 @@ public class MainClass{
 
     static final JFrame mainScene = new JFrame("TITLE");
     static final ArrayList<Entity> entitiesToUpdate = new ArrayList<>();
+    static final ArrayList<Entity> addedEntitiesToUpdate = new ArrayList<>();
+    static final ArrayList<Entity> removedEntitiesToUpdate = new ArrayList<>();
 
     public static void addEntityToUpdate(Entity e){
-        entitiesToUpdate.add(e);
-        mainScene.add(e);
+        addedEntitiesToUpdate.add(e);
+    }
+
+    public static void removeEnityFromUpdate(Entity e){
+        removedEntitiesToUpdate.add(e);
+    }
+
+    static void updateEntitiesList(){
+        for(Entity e : addedEntitiesToUpdate){
+            entitiesToUpdate.add(e);
+            mainScene.add(e);
+        }
+        for(Entity e : removedEntitiesToUpdate){
+            entitiesToUpdate.remove(e);
+            mainScene.remove(e);
+        }
+        addedEntitiesToUpdate.clear();
+        removedEntitiesToUpdate.clear();
     }
 
     public MainClass(){
         SnakeHead snakeHead = new SnakeHead();
-        snakeHead.addPart();
-        snakeHead.addPart();
-        snakeHead.addPart();
-        snakeHead.addPart();
-        snakeHead.addPart();
-        snakeHead.addPart();
-        snakeHead.addPart();
-        snakeHead.addPart();
-        snakeHead.addPart();
+
+        addEntityToUpdate(new SnakeFood(snakeHead, 400, 300, 4));
 
         mainScene.add(snakeHead);
         mainScene.setSize(800, 600);
@@ -51,7 +60,7 @@ public class MainClass{
             }
         });
 
-        Timer mainCycle = new Timer(15, e -> {
+        Timer mainCycle = new Timer(200, e -> {
             mainUpdate();
         });
 
@@ -64,6 +73,8 @@ public class MainClass{
         for(Entity e : entitiesToUpdate){
             e.Update();
         }
+
+        updateEntitiesList();
 
         MainClass.mainScene.repaint();
     }

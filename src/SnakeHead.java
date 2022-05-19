@@ -23,10 +23,10 @@ public class SnakeHead extends SnakePart{
         deltaY = 0;
         deltaX = 0;
 
-        if(Input.getKey(KeyEvent.VK_W)) deltaY -= 5;
-        if(Input.getKey(KeyEvent.VK_S)) deltaY += 5;
-        if(Input.getKey(KeyEvent.VK_D)) deltaX += 5;
-        if(Input.getKey(KeyEvent.VK_A)) deltaX -= 5;
+        if(Input.getKey(KeyEvent.VK_W)) deltaY -= 20;
+        if(Input.getKey(KeyEvent.VK_S)) deltaY += 20;
+        if(Input.getKey(KeyEvent.VK_D)) deltaX += 20;
+        if(Input.getKey(KeyEvent.VK_A)) deltaX -= 20;
 
         if(deltaY != 0 || deltaX != 0) {
             if(child != null) child.moveToParent();

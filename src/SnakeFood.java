@@ -2,9 +2,9 @@ import java.awt.*;
 
 public class SnakeFood extends Entity{
 
-    Entity snakeHead;
+    SnakeHead snakeHead;
 
-    public SnakeFood(Entity snakeHead, int x, int y, int size){
+    public SnakeFood(SnakeHead snakeHead, int x, int y, int size){
         super("Snake Food");
 
         this.snakeHead = snakeHead;
@@ -13,6 +13,10 @@ public class SnakeFood extends Entity{
 
     @Override
     public void Update() {
+        if(snakeHead.getBounds().x == bounds().x && snakeHead.getBounds().y == bounds().y){
+            for(int i = 0; i < bounds().height / 10; i++) snakeHead.addPart();
+            MainClass.removeEnityFromUpdate(this);
+        }
     }
 
     public void paint(Graphics g){
