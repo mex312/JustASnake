@@ -3,32 +3,39 @@ import java.util.Map;
 import java.util.Set;
 
 public class Input {
-    static final HashMap<Integer, Boolean> events = new HashMap<>();
+    private static final HashMap<Integer, Boolean> pressedKeys = new HashMap<>();
+    private static final HashMap<Integer, Boolean> unpressedKeys = new HashMap<>();
 
-    static final HashMap<Integer, Boolean> keys = new HashMap<>();
-    static final HashMap<Integer, Boolean> keysOnce = new HashMap<>();
+    private static final HashMap<Integer, Boolean> keys = new HashMap<>();
+    private static final HashMap<Integer, Boolean> keysOnce = new HashMap<>();
 
     public static void pressKey(int key) {
-        events.put(key, true);
+        pressedKeys.put(key, true);
     }
 
     public static void releaseKey(int key) {
-        events.put(key, false);
+        unpressedKeys.put(key, false);
     }
 
-    public static void updateKeys(){
-        HashMap<Integer, Boolean> events = (HashMap<Integer, Boolean>) Input.events.clone();
-        Input.events.clear();
+    public static void updatePressedKeys(){
+        HashMap<Integer, Boolean> events = (HashMap<Integer, Boolean>) Input.pressedKeys.clone();
+        Input.pressedKeys.clear();
 
         keysOnce.replaceAll((k, v) -> false);
 
         for(int key : events.keySet()){
             keys.put(key, events.get(key));
-            if(events.get(key)){
-                keysOnce.putIfAbsent(key, true);
-            }else{
-                keysOnce.remove(key);
-            }
+            keysOnce.putIfAbsent(key, true);
+        }
+    }
+
+    public static void updateUnpressedKeys(){
+        HashMap<Integer, Boolean> events = (HashMap<Integer, Boolean>) Input.unpressedKeys.clone();
+        Input.unpressedKeys.clear();
+
+        for(int key : events.keySet()){
+            keys.put(key, events.get(key));
+            keysOnce.remove(key);
         }
     }
 

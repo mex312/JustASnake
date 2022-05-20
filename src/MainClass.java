@@ -6,23 +6,49 @@ import java.util.Collection;
 
 public class MainClass{
 
-    static final JFrame mainScene = new JFrame("TITLE");
-    static final ArrayList<Entity> entitiesToUpdate = new ArrayList<>();
-    static final ArrayList<Entity> addedEntitiesToUpdate = new ArrayList<>();
-    static final ArrayList<Entity> removedEntitiesToUpdate = new ArrayList<>();
+    private static final Timer mainCycle = new Timer(200, e -> mainUpdate());
+
+    private static final JFrame mainScene = new JFrame("TITLE");
+    private static final ArrayList<Entity> entitiesToUpdate = new ArrayList<>();
+    private static final ArrayList<Entity> addedEntitiesToUpdate = new ArrayList<>();
+    private static final ArrayList<Entity> removedEntitiesToUpdate = new ArrayList<>();
+
+    public static void setUpdateDelay(int delay){
+        mainCycle.setDelay(delay);
+    }
 
     public static void addEntityToUpdate(Entity e){
         addedEntitiesToUpdate.add(e);
     }
 
-    public static void removeEnityFromUpdate(Entity e){
+    public static void removeEntityFromUpdate(Entity e){
         removedEntitiesToUpdate.add(e);
+    }
+
+    public static <T extends Entity> ArrayList<T> getObjectsOfType(Class<T> t){
+        ArrayList<T> list = new ArrayList<>();
+
+        for(Entity e : entitiesToUpdate){
+            if(t.isInstance(e))
+                list.add((T)e);
+        }
+
+        return list;
+    }
+
+    public static <T extends Entity> T getObjectOfType(Class<T> t){
+        for(Entity e : entitiesToUpdate){
+            if(t.isInstance(e)) return (T)e;
+        }
+
+        return null;
     }
 
     static void updateEntitiesList(){
         for(Entity e : addedEntitiesToUpdate){
             entitiesToUpdate.add(e);
             mainScene.add(e);
+            e.Start();
         }
         for(Entity e : removedEntitiesToUpdate){
             entitiesToUpdate.remove(e);
@@ -32,15 +58,20 @@ public class MainClass{
         removedEntitiesToUpdate.clear();
     }
 
+    public static void exit() {
+        System.exit(0);
+    }
+
     public MainClass(){
-        SnakeHead snakeHead = new SnakeHead();
+        new SnakeHead();
+        new SnakeFood(400, 300, 4).regenerate();
+        new SnakeListener();
 
-        addEntityToUpdate(new SnakeFood(snakeHead, 400, 300, 4));
-
-        mainScene.add(snakeHead);
+        mainScene.setUndecorated(true);
         mainScene.setSize(800, 600);
         mainScene.setLayout(null);
         mainScene.setVisible(true);
+        mainScene.setBackground(Color.GRAY);
         mainScene.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         mainScene.addKeyListener(new KeyListener() {
@@ -60,21 +91,19 @@ public class MainClass{
             }
         });
 
-        Timer mainCycle = new Timer(200, e -> {
-            mainUpdate();
-        });
-
         mainCycle.start();
     }
 
-    private void mainUpdate(){
-        Input.updateKeys();
+    private static void mainUpdate(){
+        Input.updatePressedKeys();
 
         for(Entity e : entitiesToUpdate){
             e.Update();
         }
 
         updateEntitiesList();
+
+        Input.updateUnpressedKeys();
 
         MainClass.mainScene.repaint();
     }

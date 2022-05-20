@@ -1,9 +1,11 @@
+import com.sun.tools.javac.Main;
+
 import java.awt.event.KeyEvent;
 
 public class SnakeHead extends SnakePart{
 
-    int deltaX = 0;
-    int deltaY = 0;
+    private int deltaX = 20;
+    private int deltaY = 0;
 
     public SnakeHead() {
         super(null);
@@ -16,17 +18,16 @@ public class SnakeHead extends SnakePart{
             part = part.child;
         }
 
-        new SnakePart(part);
+        new SnakePart(part, part.getX(), part.getY());
     }
 
     public void Update(){
-        deltaY = 0;
-        deltaX = 0;
+        super.Update();
 
-        if(Input.getKey(KeyEvent.VK_W)) deltaY -= 20;
-        if(Input.getKey(KeyEvent.VK_S)) deltaY += 20;
-        if(Input.getKey(KeyEvent.VK_D)) deltaX += 20;
-        if(Input.getKey(KeyEvent.VK_A)) deltaX -= 20;
+        if(Input.getKeyDown(KeyEvent.VK_W) && deltaY != 20) { deltaY = -20; deltaX = 0; }
+        else if(Input.getKeyDown(KeyEvent.VK_S) && deltaY != -20) { deltaY = 20; deltaX = 0; }
+        else if(Input.getKeyDown(KeyEvent.VK_D) && deltaX != -20) { deltaX = 20; deltaY = 0; }
+        else if(Input.getKeyDown(KeyEvent.VK_A) && deltaX != 20) { deltaX = -20; deltaY = 0; }
 
         if(deltaY != 0 || deltaX != 0) {
             if(child != null) child.moveToParent();
@@ -34,6 +35,6 @@ public class SnakeHead extends SnakePart{
             move(deltaX, deltaY);
         }
 
-
+        if (this.getBounds().getCenterX() >= 800 || this.getBounds().getCenterX() <= 0 || this.getBounds().getCenterY() >= 600 || this.getBounds().getCenterY() <= 0) this.die();
     }
 }

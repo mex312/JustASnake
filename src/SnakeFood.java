@@ -1,21 +1,45 @@
 import java.awt.*;
+import java.util.Random;
 
 public class SnakeFood extends Entity{
 
-    SnakeHead snakeHead;
+    private int size = 0;
 
-    public SnakeFood(SnakeHead snakeHead, int x, int y, int size){
+    public SnakeFood(int x, int y, int size){
         super("Snake Food");
 
-        this.snakeHead = snakeHead;
-        setBounds(x, y, size * 5, size * 5);
+        setBounds(x + 10 - size * 5, y + 10 - size * 5, size * 10, size * 10);
+        this.size = size;
+    }
+
+    public void regenerate(){
+        Random rand = new Random();
+        int newX = rand.nextInt(760); newX -= newX % 20;
+        int newY = rand.nextInt(560); newY -= newY % 20;
+        int newSize = rand.nextInt(1,10);
+        setBounds(newX + 10 - newSize * 5, newY + 10 - newSize * 5, newSize * 10, newSize * 10);
+        this.size = newSize;
+        for(SnakePart part : MainClass.getObjectsOfType(SnakePart.class)){
+            if(part.getBounds().getCenterX() == this.getBounds().getCenterX() && part.getBounds().getCenterY() == this.getBounds().getCenterY()){
+                regenerate();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void Start() {
+        //MainClass.mainScene.setComponentZOrder(this, 0);
     }
 
     @Override
     public void Update() {
-        if(snakeHead.getBounds().x == bounds().x && snakeHead.getBounds().y == bounds().y){
-            for(int i = 0; i < bounds().height / 10; i++) snakeHead.addPart();
-            MainClass.removeEnityFromUpdate(this);
+        SnakeHead snakeHead = MainClass.getObjectOfType(SnakeHead.class);
+        if(snakeHead == null) return;
+
+        if(snakeHead.getBounds().getCenterX() == bounds().getCenterX() && snakeHead.getBounds().getCenterY() == bounds().getCenterY()){
+            for(int i = 0; i < this.size; i++) snakeHead.addPart();
+            regenerate();
         }
     }
 
